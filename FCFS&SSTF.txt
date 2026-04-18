@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+// -------- FCFS --------
+void FCFS(int requests[], int n, int head) {
+    int totalSeek = 0;
+
+    printf("\n--- FCFS Disk Scheduling ---\n");
+    printf("Seek Sequence: %d ", head);
+
+    for (int i = 0; i < n; i++) {
+        totalSeek += abs(requests[i] - head);
+        head = requests[i];
+        printf("-> %d ", head);
+    }
+
+    printf("\nTotal Seek Time = %d\n", totalSeek);
+}
+
+// -------- SSTF --------
+void SSTF(int requests[], int n, int head) {
+    int totalSeek = 0;
+    int visited[n];
+
+    for (int i = 0; i < n; i++)
+        visited[i] = 0;
+
+    printf("\n--- SSTF Disk Scheduling ---\n");
+    printf("Seek Sequence: %d ", head);
+
+    for (int i = 0; i < n; i++) {
+        int minDist = INT_MAX;
+        int index = -1;
+
+        for (int j = 0; j < n; j++) {
+            if (!visited[j]) {
+                int dist = abs(head - requests[j]);
+                if (dist < minDist) {
+                    minDist = dist;
+                    index = j;
+                }
+            }
+        }
+
+        visited[index] = 1;
+        totalSeek += minDist;
+        head = requests[index];
+
+        printf("-> %d ", head);
+    }
+
+    printf("\nTotal Seek Time = %d\n", totalSeek);
+}
+
+// -------- Main --------
+int main() {
+    int requests[] = {98, 183, 37, 122, 14, 124, 65, 67};
+    int n = sizeof(requests) / sizeof(requests[0]);
+    int head = 53;
+
+    printf("Initial Head Position: %d\n", head);
+
+    FCFS(requests, n, head);
+    SSTF(requests, n, head);
+
+    return 0;
+}
